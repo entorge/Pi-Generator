@@ -19,7 +19,7 @@ A Windows desktop app that computes and displays digits of π in real time, buil
 ### Run from source
 
 ```
-git clone https://github.com/entorge/pi-generator
+git clone https://github.com/entorge/Pi-Generator
 cd pi-generator
 dotnet run --project PiGenerator
 ```
