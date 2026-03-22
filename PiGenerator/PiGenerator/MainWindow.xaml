@@ -1,0 +1,164 @@
+<Window x:Class="PiGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="π Generator"
+        Width="900" Height="680"
+        MinWidth="600" MinHeight="480"
+        Background="#0A0A0F"
+        FontFamily="Courier New"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+
+        <Style x:Key="PiButton" TargetType="Button">
+            <Setter Property="Background"      Value="#13132A"/>
+            <Setter Property="Foreground"      Value="#7B9FFF"/>
+            <Setter Property="BorderBrush"     Value="#3A3A6A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily"      Value="Courier New"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="Padding"         Value="22,8"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background"  Value="#1E1E40"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#7B9FFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97"
+                                                        CenterX="50" CenterY="15"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="30,24,30,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0"
+                   Text="π"
+                   FontSize="52" FontWeight="Bold"
+                   Foreground="#7B9FFF"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,4">
+            <TextBlock.Effect>
+                <DropShadowEffect Color="#3A5FFF" BlurRadius="28" ShadowDepth="0" Opacity="0.55"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <!-- Subtitle -->
+        <TextBlock Grid.Row="1"
+                   Text="computing digits of pi"
+                   FontSize="11" Foreground="#555580"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,18"/>
+
+        <!-- Stats -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0,0,0,18">
+
+            <StackPanel Margin="0,0,36,0">
+                <TextBlock x:Name="TbDigitCount" Text="0"
+                           FontSize="26" FontWeight="Bold"
+                           Foreground="#7B9FFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="DIGITS" FontSize="9" Foreground="#444466"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Margin="0,0,36,0">
+                <TextBlock x:Name="TbElapsed" Text="0s"
+                           FontSize="26" FontWeight="Bold"
+                           Foreground="#7B9FFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="ELAPSED" FontSize="9" Foreground="#444466"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock x:Name="TbRate" Text="—"
+                           FontSize="26" FontWeight="Bold"
+                           Foreground="#7B9FFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="DIGITS/SEC" FontSize="9" Foreground="#444466"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+        </StackPanel>
+
+        <!-- Digit display — plain TextBox for perf, styled to match -->
+        <Border Grid.Row="3"
+                Background="#0F0F1A"
+                BorderBrush="#1E1E3A"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="22,18">
+            <TextBox x:Name="TbDigits"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     FontFamily="Courier New"
+                     FontSize="14"
+                     Background="Transparent"
+                     Foreground="#9999CC"
+                     BorderThickness="0"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Disabled"
+                     IsUndoEnabled="False"
+                     Text="3.">
+                <TextBox.Resources>
+                    <!-- Hide selection highlight when not focused -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                     Color="Transparent"/>
+                </TextBox.Resources>
+            </TextBox>
+        </Border>
+
+        <!-- Controls -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0,16,0,0">
+            <Button x:Name="BtnToggle" Content="⏸  Pause"
+                    Style="{StaticResource PiButton}"
+                    Margin="0,0,10,0" Click="BtnToggle_Click"/>
+            <Button Content="⎘  Copy"
+                    Style="{StaticResource PiButton}"
+                    Margin="0,0,10,0" Click="BtnCopy_Click"/>
+            <Button Content="↺  Restart"
+                    Style="{StaticResource PiButton}"
+                    Click="BtnRestart_Click"/>
+        </StackPanel>
+
+        <!-- Status -->
+        <TextBlock Grid.Row="5"
+                   x:Name="TbStatus"
+                   Text="● computing..."
+                   FontSize="10" Foreground="#333355"
+                   HorizontalAlignment="Center"
+                   Margin="0,10,0,0"/>
+
+    </Grid>
+</Window>
